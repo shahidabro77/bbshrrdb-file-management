@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Accounts Section</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 p-6">
+      <h1 class="text-3xl font-semibold mb-4">Accounts Section</h1>
+      <p class="text-gray-700">This section manages all financial records and file tracking for accounts-related
+        matters.</p>
+    </main>
+  </div>
+
+  <script src="./js/header.js"></script>
+
+  <script>
+    //user toggle
+    // User Dropdown Toggle
+    const userBtn = document.getElementById('user-dropdown-btn');
+    const userMenu = document.getElementById('user-dropdown-menu');
+
+    userBtn.addEventListener('click', () => {
+      userMenu.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+        userMenu.classList.add('hidden');
+      }
+    });
+
+  </script>
+
+  <script>
+    // Load sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('sidebar-container').innerHTML = data;
+
+        // Highlight active link
+        const current = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === current) {
+            link.classList.add('bg-blue-600', 'font-bold');
+          }
+        });
+      });
+  </script>
+</body>
+
+</html>

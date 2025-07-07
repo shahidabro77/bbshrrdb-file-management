@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Content -->
+    <div class="flex flex-1">
+      <!-- Sidebar -->
+      <div id="sidebar-container" class="w-64 bg-white shadow hidden md:block"></div>
+
+      <!-- Main Section -->
+      <main class="flex-1 p-6 pt-[80px] ml-0 flex items-start">
+        <section class="bg-white rounded-2xl shadow p-6 w-full max-w-5xl">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-semibold">User Management</h2>
+          </div>
+
+          <!-- Error/Success Message Container -->
+          <div id="message-container" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4"></div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-sm" id="userTable">
+              <thead class="bg-gray-100 text-left text-gray-700 uppercase tracking-wider">
+                <tr>
+                  <th class="px-4 py-2">User ID</th>
+                  <th class="px-4 py-2">Full Name</th>
+                  <th class="px-4 py-2">Email</th>
+                  <th class="px-4 py-2">Status</th>
+                  <th class="px-4 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody" class="divide-y divide-gray-100">
+                <!-- Dynamic rows will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Header and Sidebar Load -->
+  <script>
+    // Load header
+    fetch('/header.html')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load header');
+        return res.text();
+      })
+      .then(data => {
+        document.getElementById('header-container').innerHTML = data;
+      })
+      .catch(error => {
+        console.error('🚨 Failed to load header:', error);
+      });
+
+    // Load sidebar
+    fetch('/sidebar.html')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load sidebar');
+        return res.text();
+      })
+      .then(data => {
+        document.getElementById('sidebar-container').innerHTML = data;
+        const current = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+          if (link.getAttribute('href') === current) {
+            link.classList.add('bg-blue-600', 'font-bold', 'text-white');
+          }
+        });
+      })
+      .catch(error => {
+        console.error('🚨 Failed to load sidebar:', error);
+      });
+  </script>
+
+  <!-- User Table Script -->
+  <script>
+    const showMessage = (message, isError = true) => {
+      const messageDiv = document.getElementById('message-container');
+      messageDiv.textContent = message;
+      messageDiv.classList.remove('hidden', 'bg-green-100', 'border-green-400', 'text-green-700', 'bg-red-100', 'border-red-400', 'text-red-700');
+      messageDiv.classList.add(isError ? 'bg-red-100' : 'bg-green-100', isError ? 'border-red-400' : 'border-green-400', isError ? 'text-red-700' : 'text-green-700');
+      setTimeout(() => messageDiv.classList.add('hidden'), 5000);
+    };
+
+    const loadUsers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          showMessage('Please log in to view users.');
+          setTimeout(() => window.location.href = '/login.html', 2000);
+          return;
+        }
+
+        const response = await fetch('http://localhost:3000/api/users', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            showMessage('Unauthorized. Please log in again.');
+            setTimeout(() => window.location.href = '/login.html', 2000);
+            return;
+          }
+          throw new Error('Failed to fetch users');
+        }
+
+        const users = await response.json();
+        populateUserTable(users);
+      } catch (error) {
+        showMessage(error.message || 'An error occurred while fetching users.');
+        console.error('🚨 Failed to fetch users:', error);
+      }
+    };
+
+    const populateUserTable = (users) => {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="px-4 py-2">${user.user_id}</td>
+          <td class="px-4 py-2">${user.full_name}</td>
+          <td class="px-4 py-2">${user.email}</td>
+          <td class="px-4 py-2 font-medium ${user.is_active ? 'text-green-600' : 'text-red-600'}">
+            ${user.is_active ? 'Active' : 'Inactive'}
+          </td>
+          <td class="px-4 py-2">
+            <button 
+              onclick="toggleUserStatus(${user.user_id}, ${user.is_active})"
+              class="px-3 py-1 text-sm rounded ${
+                user.is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+              } text-white"
+            >
+              ${user.is_active ? 'Deactivate' : 'Activate'}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    };
+
+    const toggleUserStatus = async (userId, currentStatus) => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          showMessage('Please log in to perform this action.');
+          setTimeout(() => window.location.href = '/login.html', 2000);
+          return;
+        }
+
+        const response = await fetch(`http://localhost:3000/api/users/${userId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ is_active: !currentStatus })
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            showMessage('Unauthorized. Please log in again.');
+            setTimeout(() => window.location.href = '/login.html', 2000);
+            return;
+          }
+          throw new Error('Failed to update user status');
+        }
+
+        const result = await response.json();
+        showMessage(result.message, false); // Success message in green
+        loadUsers(); // Refresh the table
+      } catch (error) {
+        showMessage(error.message || 'An error occurred while updating user status.');
+        console.error('🚨 Failed to update status:', error);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', loadUsers);
+  </script>
+</body>
+</html>

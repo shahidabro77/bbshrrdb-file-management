@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Code</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body class="bg-gray-100 text-gray-900 overflow-y-scroll">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="flex flex-col items-center justify-center min-h-[calc(100vh-5rem)] md:ml-64 p-6 mt-10">
+      <h1 class="text-3xl font-semibold mb-6 text-center">QR Code Generator</h1>
+      <div class="bg-white p-6 rounded shadow-md w-full max-w-xl mx-auto">
+        <form id="qrForm" class="grid grid-cols-1 gap-4 mb-6" onsubmit="event.preventDefault(); generateQRCode();">
+          <input type="text" id="fileNumber" placeholder="Enter File Number"
+            class="border rounded p-3 w-full text-center" />
+          <input type="hidden" id="section" value="Admin Section" />
+          <input type="hidden" id="subject" value="Annual Budget Report 2025" />
+          <input type="hidden" id="date" value="2025-06-28" />
+        </form>
+
+        <div class="flex justify-center">
+          <button onclick="generateQRCode()"
+            class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded transition mb-6">
+            Generate QR Code
+          </button>
+        </div>
+
+        <div id="qrcode" class="flex justify-center items-center"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="./js/header.js"></script>
+
+  <script>
+    // Load sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('sidebar-container').innerHTML = data;
+
+        // Highlight active link
+        const current = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === current) {
+            link.classList.add('bg-blue-600', 'font-bold');
+          }
+        });
+      });
+  </script>
+
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      function updateDateTime() {
+        const now = new Date();
+        const date = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+        const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        document.getElementById('current-date-time').textContent = `Date: ${date} | Time: ${time} PKT`;
+      }
+
+      updateDateTime();
+      setInterval(updateDateTime, 60000);
+
+      const userBtn = document.getElementById('user-dropdown-btn');
+      const userMenu = document.getElementById('user-dropdown-menu');
+
+      userBtn.addEventListener('click', () => {
+        userMenu.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+          userMenu.classList.add('hidden');
+        }
+      });
+    });
+
+    function generateQRCode() {
+      const fileNumber = document.getElementById('fileNumber').value.trim();
+      const section = document.getElementById('section').value;
+      const subject = document.getElementById('subject').value;
+      const date = document.getElementById('date').value;
+
+      if (!fileNumber) {
+        alert('Please enter the File Number.');
+        return;
+      }
+
+      const qrData = `File Number: ${fileNumber}\nSection: ${section}\nSubject: ${subject}\nDate: ${date}`;
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+
+      new QRCode(qrContainer, {
+        text: qrData,
+        width: 200,
+        height: 200
+      });
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('hidden');
+    }
+  </script>
+</body>
+
+</html>

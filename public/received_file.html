@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <title>Received File</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 text-gray-900 overflow-y-scroll">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="md:ml-64 p-6 pt-[100px] transition-all duration-300">
+      <h1 class="text-3xl font-semibold mb-4">Received File</h1>
+      <p class="text-gray-700 mb-6">This page lists all received files for review and processing.</p>
+
+      <!-- Form -->
+      <form id="received-file-form" class="bg-white rounded-xl shadow-md p-6 space-y-4" enctype="multipart/form-data">
+        <!-- Row 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-semibold mb-1">File Number</label>
+            <input name="file_number" type="text"
+              class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">File Subject</label>
+            <input name="file_subject" type="text"
+              class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block font-semibold mb-1">File Description</label>
+          <textarea name="file_description"
+            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows="4"></textarea>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-semibold mb-1">Received on Date</label>
+            <input type="date" name="received_on"
+              class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Received From</label>
+            <select name="received_from"
+              class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required>
+              <option value="">-- Select Section --</option>
+              <option>Admin Section</option>
+              <option>Accounts Section</option>
+              <option>Training Section</option>
+              <option>Private Sector</option>
+              <option>Public Sector</option>
+              <option>I.T Section</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Remarks -->
+        <div>
+          <label class="block font-semibold mb-1">Remarks</label>
+          <textarea name="remarks"
+            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows="2"></textarea>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-semibold mb-1">Sent To</label>
+            <select name="sent_to"
+              class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required>
+              <option value="">-- Select Section --</option>
+              <option>Admin Section</option>
+              <option>Accounts Section</option>
+              <option>Training Section</option>
+              <option>Private Sector</option>
+              <option>Public Sector</option>
+              <option>I.T Section</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Sent on Date</label>
+            <input type="date" name="sent_on"
+              class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required>
+          </div>
+        </div>
+
+        <!-- Attachments -->
+        <div>
+          <label class="block font-semibold mb-1">Attachments</label>
+          <input type="file" name="attachments" multiple
+            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Submit -->
+        <div class="pt-4">
+          <button type="submit"
+            class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Save</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script src="./js/header.js"></script>
+
+  <script>
+    // Load sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('sidebar-container').innerHTML = data;
+
+        // Highlight active link
+        const current = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === current) {
+            link.classList.add('bg-blue-600', 'font-bold');
+          }
+        });
+      });
+  </script>
+
+
+  <!-- Scripts -->
+  <script>
+    // Toggle User Dropdown
+    const userBtn = document.getElementById('user-dropdown-btn');
+    const userMenu = document.getElementById('user-dropdown-menu');
+    userBtn.addEventListener('click', () => {
+      const isHidden = userMenu.classList.toggle('hidden');
+      userBtn.setAttribute('aria-expanded', !isHidden);
+    });
+    document.addEventListener('click', (e) => {
+      if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+        userMenu.classList.add('hidden');
+        userBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Load sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('sidebar-container').innerHTML = data;
+        const current = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === current) {
+            link.classList.add('bg-blue-600', 'font-bold');
+          }
+        });
+      });
+
+    // Sidebar toggle for mobile
+    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar-container');
+      sidebar.classList.toggle('hidden');
+    });
+
+    // Text Editor
+
+
+    // Live Date & Time
+    function updateDateTime() {
+      const now = new Date();
+      const date = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('current-date-time').textContent = `Date: ${date} | Time: ${time} PKT`;
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // Update every minute
+  </script>
+
+  <script>
+    const form = document.getElementById('received-file-form');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      try {
+        const token = localStorage.getItem('token'); // or wherever your auth token is stored
+
+        const res = await fetch('/api/received-files', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert('Received file saved successfully!');
+          form.reset();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Something went wrong.');
+      }
+    });
+  </script>
+
+</body>
+
+</html>

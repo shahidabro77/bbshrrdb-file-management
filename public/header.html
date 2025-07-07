@@ -1,0 +1,48 @@
+<header class="bg-blue-800 text-white p-4 shadow-md fixed w-full top-0 left-0 z-50">
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center">
+          <!-- Toggle Button (for sidebar on small screens) -->
+          <button class="md:hidden mr-4 focus:outline-none" aria-label="Toggle Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
+          <span class="text-lg md:text-2xl font-bold whitespace-nowrap">
+            BBSHRRDB File Management System
+          </span>
+        </div>
+
+        <div class="flex items-center space-x-4 relative">
+          <!-- Date & Time -->
+          <span class="hidden md:block text-sm" id="current-date-time">
+            Date: June 27, 2025 | Time: 02:00 AM PKT
+          </span>
+
+          <!-- User Dropdown -->
+          <div class="relative">
+            <button id="user-dropdown-btn"
+              class="flex items-center hover:bg-blue-600 px-3 py-2 rounded-md focus:outline-none transition duration-200">
+              <i class="fas fa-user mr-2"></i> User
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="user-dropdown-menu"
+              class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lg hidden z-50">
+              <a href="profile_settings.html" class="flex items-center px-4 py-2 hover:bg-blue-100 transition duration-200">
+                <i class="fas fa-user mr-2 text-blue-600"></i> Profile Settings
+              </a>
+              <a href="#" class="flex items-center px-4 py-2 hover:bg-blue-100 transition duration-200">
+                <i class="fas fa-cog mr-2 text-green-600"></i> Settings
+              </a>
+              <a href="#" id="logoutBtn"
+                class="flex items-center px-4 py-2 text-red-600 hover:bg-blue-100 transition duration-200">
+                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>

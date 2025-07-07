@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search File</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <div id="header-container"></div>
+    <div class="flex pt-20">
+      <!-- Sidebar -->
+      <div id="sidebar-container"></div>
+
+      <!-- Main Content -->
+      <main class="md:ml-64 p-6 pt-[50px] transition-all duration-300">
+        <h1 class="text-3xl font-semibold mb-4">Search File</h1>
+        <p class="text-gray-700 mb-6">Below is a list of matched files based on your search.</p>
+
+        <!-- Search Input -->
+        <!-- Centered Container for Search + Table -->
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <!-- Search Input -->
+          <div class="w-full max-w-xl">
+            <input type="text" id="searchInput" placeholder="Search by File ID, Subject, Section, Date, or Status..."
+              class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <!-- File Table -->
+          <div class="overflow-x-auto shadow rounded-lg bg-white ml-10">
+            <table id="fileTable" class="text-sm text-left text-gray-700">
+              <thead class="text-xs uppercase bg-blue-800 text-white">
+                <tr>
+                  <th scope="col" class="px-6 py-3">File ID</th>
+                  <th scope="col" class="px-6 py-3">Subject</th>
+                  <th scope="col" class="px-6 py-3">Section</th>
+                  <th scope="col" class="px-6 py-3">Date Received</th>
+                  <th scope="col" class="px-6 py-3">Status</th>
+                  <th scope="col" class="px-6 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-gray-100">
+                  <td class="px-6 py-4">#12345</td>
+                  <td class="px-6 py-4">Annual Budget Review</td>
+                  <td class="px-6 py-4">Accounts Section</td>
+                  <td class="px-6 py-4">June 20, 2025</td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Received</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <button class="text-blue-600 hover:underline text-sm">View</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-100">
+                  <td class="px-6 py-4">#67890</td>
+                  <td class="px-6 py-4">IT Equipment Purchase</td>
+                  <td class="px-6 py-4">I.T Section</td>
+                  <td class="px-6 py-4">June 18, 2025</td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <button class="text-blue-600 hover:underline text-sm">View</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="previewModal"
+    class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 flex justify-center items-center">
+    <div class="bg-white p-4 rounded-lg w-11/12 md:w-2/3 h-4/5 relative m-auto">
+      <button onclick="closePreview()" class="absolute top-2 right-4 text-xl font-bold text-gray-600">&times;</button>
+      <div id="previewContent" class="w-full h-full overflow-auto text-center"></div>
+    </div>
+  </div>
+
+  <script src="./js/header.js"></script>
+
+  <script>
+    // Load sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('sidebar-container').innerHTML = data;
+
+        // Highlight active link
+        const current = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === current) {
+            link.classList.add('bg-blue-600', 'font-bold');
+          }
+        });
+      });
+  </script>
+
+  <!-- JavaScript -->
+  <script>
+    // User dropdown toggle
+    const userBtn = document.getElementById('user-dropdown-btn');
+    const userMenu = document.getElementById('user-dropdown-menu');
+
+    if (userBtn) {
+      userBtn.addEventListener('click', () => {
+        userMenu.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+          userMenu.classList.add('hidden');
+        }
+      });
+    }
+
+    // Search filter
+    //const searchInput = document.getElementById('searchInput');
+    //const table = document.getElementById('fileTable').getElementsByTagName('tbody')[0];
+
+    //searchInput.addEventListener('keyup', function () {
+    //  const filter = this.value.toLowerCase();
+    //  const rows = table.getElementsByTagName('tr');
+
+    //  Array.from(rows).forEach(row => {
+    //    const text = row.textContent.toLowerCase();
+    //    row.style.display = text.includes(filter) ? '' : 'none';
+    //  });
+    //});
+  </script>
+  <script>
+    function isImage(fileName) {
+      return /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+    }
+
+    function isPDF(fileName) {
+      return /\.pdf$/i.test(fileName);
+    }
+
+    function previewAttachment(url, type) {
+      const modal = document.getElementById('previewModal');
+      const content = document.getElementById('previewContent');
+
+      if (type === 'pdf') {
+        content.innerHTML = `<iframe src="${url}" class="w-full h-full" frameborder="0"></iframe>`;
+      } else if (type === 'image') {
+        content.innerHTML = `<img src="${url}" class="mx-auto max-h-full" />`;
+      } else {
+        content.innerHTML = `<p class="text-red-500">Preview not supported for this file type.</p>`;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closePreview() {
+      document.getElementById('previewModal').classList.add('hidden');
+      document.getElementById('previewContent').innerHTML = '';
+    }
+
+
+
+    const token = localStorage.getItem('token');
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.querySelector('#fileTable tbody');
+
+    searchInput.addEventListener('keyup', async function () {
+      const query = this.value.trim();
+
+      if (!query) {
+        tableBody.innerHTML = '';
+        return;
+      }
+
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const rows = data.results.map(file => {
+          const date = file.received_on || file.sent_on || 'N/A';
+          const section = file.sent_to || file.received_from || 'N/A';
+          const status = file.type === 'received' ? 'Received' : 'Sent';
+          const badgeClass = file.type === 'received' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+
+          const attachmentLinks = (file.attachments || []).map(name => {
+            const folder = file.type === 'received' ? 'received_files' : 'sent_files';
+            const url = `/uploads/${folder}/${name}`;
+            return `<a href="${url}" target="_blank" class="text-blue-600 hover:underline block" download>${name}</a>`;
+          }).join('');
+
+          const attachmentPreviewButtons = (file.attachments || []).map(name => {
+            const folder = file.type === 'received' ? 'received_files' : 'sent_files';
+            const url = `/uploads/${folder}/${name}`;
+            const type = isPDF(name) ? 'pdf' : isImage(name) ? 'image' : 'other';
+
+            return `
+              <button onclick="previewAttachment('${url}', '${type}')" class="text-blue-600 hover:underline text-sm block">
+                View 
+              </button>
+            `;
+          }).join('');
+
+
+
+          return `
+          <tr class="hover:bg-gray-100">
+            <td class="px-6 py-4">#${file.id}</td>
+            <td class="px-6 py-4">${file.file_subject}</td>
+            <td class="px-6 py-4">${section}</td>
+            <td class="px-6 py-4">${new Date(date).toLocaleDateString()}</td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full ${badgeClass}">
+                ${status}
+              </span>
+            </td>
+            <td class="px-6 py-4">${attachmentPreviewButtons || '-'}</td>
+
+          </tr>
+        `;
+        }).join('');
+
+        tableBody.innerHTML = rows || `<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No results found.</td></tr>`;
+      }
+    });
+  </script>
+
+</body>
+
+</html>

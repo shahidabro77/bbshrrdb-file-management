@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>File Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 text-gray-900 overflow-y-auto">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 p-6 pt-24">
+      <h1 class="text-3xl font-semibold mb-6">File Manager</h1>
+      <p class="mb-4">This is the File Manager page. You can manage, move, or delete files from here.</p>
+
+      <!-- Folder Grid -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-folder text-yellow-500 text-3xl"></i>
+            <div>
+              <h2 class="font-semibold text-lg">Admin Section</h2>
+              <p class="text-sm text-gray-500">12 files</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-folder text-yellow-500 text-3xl"></i>
+            <div>
+              <h2 class="font-semibold text-lg">Accounts</h2>
+              <p class="text-sm text-gray-500">8 files</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-folder text-yellow-500 text-3xl"></i>
+            <div>
+              <h2 class="font-semibold text-lg">Training</h2>
+              <p class="text-sm text-gray-500">5 files</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- More folder cards can be added below -->
+      </section>
+    </main>
+  </div>
+
+  <script src="./js/header.js"></script>
+
+  <script>
+    // Dropdown toggle
+    document.getElementById("user-dropdown-btn").addEventListener("click", () => {
+      const menu = document.getElementById("user-dropdown-menu");
+      menu.classList.toggle("hidden");
+    });
+
+    // Close dropdown when clicking outside
+    window.addEventListener("click", (e) => {
+      const button = document.getElementById("user-dropdown-btn");
+      const menu = document.getElementById("user-dropdown-menu");
+      if (!button.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+  </script>
+
+  <script>
+    // Load sidebar
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('sidebar-container').innerHTML = data;
+
+        // Highlight active link
+        const current = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === current) {
+            link.classList.add('bg-blue-600', 'font-bold');
+          }
+        });
+      });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>BBSHRRDB Register</title>
+  <link href="/css/output.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-200">
+
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <img class="mx-auto h-20 w-auto" src="/img/logo.png" alt="Workflow Logo" />
+    <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900">
+      Register Your Account
+    </h2>
+  </div>
+
+  <!-- Top Error Messages Container -->
+  <div id="top-errors-container" class="mx-auto max-w-md">
+    <!-- Name Error -->
+    <div id="name-top-error" class="mb-4 text-red-600 text-sm hidden bg-white p-3 rounded shadow text-center"
+      role="alert" aria-live="assertive">
+      Please enter your full name (letters and spaces only)
+    </div>
+
+    <!-- CNIC Error -->
+    <div id="cnic-top-error" class="mb-4 text-red-600 text-sm hidden bg-white p-3 rounded shadow text-center"
+      role="alert" aria-live="assertive">
+      Please enter a valid CNIC of Sindh province (e.g., 41234-1234567-1)
+    </div>
+
+    <!-- Email Error -->
+    <div id="email-top-error" class="mb-4 text-red-600 text-sm hidden bg-white p-3 rounded shadow text-center"
+      role="alert" aria-live="assertive">
+      Please enter a valid email address (e.g., user@example.com)
+    </div>
+
+    <!-- Mobile Error -->
+    <div id="mobile-top-error" class="mb-4 text-red-600 text-sm hidden bg-white p-3 rounded shadow text-center"
+      role="alert" aria-live="assertive">
+      Please enter a valid mobile number starting with 03 (11 digits)
+    </div>
+
+    <!-- Password Error -->
+    <div id="password-top-error" class="mb-4 text-red-600 text-sm hidden bg-white p-3 rounded shadow text-center"
+      role="alert" aria-live="assertive">
+      Password must be at least 8 characters and both passwords must match
+    </div>
+
+    <!-- Checkbox Error -->
+    <div id="checkbox-top-error" class="mb-4 text-red-600 text-sm hidden bg-white p-3 rounded shadow text-center"
+      role="alert" aria-live="assertive">
+      You must confirm that all information is correct
+    </div>
+  </div>
+
+  <div class="mt-4 mx-auto w-full max-w-md">
+    <form id="registrationForm" action="/api/register" method="POST"
+      class="w-full px-6 py-6 bg-white shadow-md rounded-md" novalidate>
+
+      <!-- Hidden User ID -->
+      <input type="hidden" id="user_uid" name="user_uid" />
+
+      <!-- Row 1: Name + CNIC -->
+      <div class="flex flex-col sm:flex-row sm:space-x-4">
+        <div class="flex-1 mb-4 sm:mb-0">
+          <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input id="full_name" name="full_name" type="text" placeholder="Full Name" required pattern="^[a-zA-Z\s]+$"
+            aria-describedby="name-error" autocomplete="name" value="asdasd"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+          <p id="name-error" class="text-red-600 text-sm mt-1 hidden" role="alert">
+            Name is required and must contain only letters and spaces.
+          </p>
+        </div>
+
+        <div class="flex-1">
+          <label for="cnic" class="block text-sm font-medium text-gray-700">CNIC</label>
+          <!-- <input id="cnic" name="cnic" type="text" placeholder="4XXXX-XXXXXXX-X" required maxlength="15"
+            pattern="^4\d{4}-\d{7}-\d{1}$" aria-describedby="cnic-error" autocomplete="off" value="41234-1234567-1"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" /> -->
+            <input
+              id="cnic"
+              name="cnic"
+              type="text"
+              placeholder="4XXXX-XXXXXXX-X"
+              required
+              maxlength="15"
+              pattern="^4\d{4}-\d{7}-\d{1}$"
+              aria-describedby="cnic-error"
+              autocomplete="off"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          <p id="cnic-error" class="text-red-600 text-sm mt-1 hidden" role="alert">
+            CNIC must be in format 4XXXX-XXXXXXX-X
+          </p>
+        </div>
+      </div>
+
+      <!-- Row 2: Email + Mobile -->
+      <div class="flex flex-col sm:flex-row sm:space-x-4 mt-6">
+        <div class="flex-1 mb-4 sm:mb-0">
+          <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <input id="email" name="email" type="email" placeholder="user@example.com" required
+            aria-describedby="email-error" autocomplete="email" value="asd@asd.com"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+          <p id="email-error" class="text-red-600 text-sm mt-1 hidden" role="alert">
+            Enter a valid email address.
+          </p>
+        </div>
+
+        <div class="flex-1">
+          <label for="mobile" class="block text-sm font-medium text-gray-700">Mobile Number</label>
+          <input id="mobile" name="mobile" type="tel" placeholder="03XXXXXXXXX" required maxlength="11"
+            pattern="^03\d{9}$" aria-describedby="mobile-error" autocomplete="tel" value="03472972069"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+          <p id="mobile-error" class="text-red-600 text-sm mt-1 hidden" role="alert">
+            Enter a valid mobile number starting with 03.
+          </p>
+        </div>
+      </div>
+
+      <!-- Row 3: Password + Confirm Password -->
+      <div class="flex flex-col sm:flex-row sm:space-x-4 mt-6">
+        <div class="flex-1 mb-4 sm:mb-0">
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input id="password" name="password" type="password" required minlength="8" aria-describedby="password-error"
+            autocomplete="new-password" value="asd@asd.com"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+        </div>
+
+        <div class="flex-1">
+          <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <input id="password_confirmation" name="password_confirmation" type="password" required
+            aria-describedby="password-error" autocomplete="new-password" value="asd@asd.com"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+          <p id="password-error" class="text-red-600 text-sm mt-1 hidden" role="alert">
+            Passwords must match and be at least 8 characters.
+          </p>
+        </div>
+      </div>
+
+      <!-- Confirmation checkbox -->
+      <div class="mt-6 flex items-center">
+        <input id="confirmation" name="confirmation" type="checkbox" required aria-describedby="checkbox-error" checked
+          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+        <label for="confirmation" class="ml-2 block text-sm text-gray-700">
+          I confirm that all the information entered is correct.
+        </label>
+      </div>
+      <p id="checkbox-error" class="text-red-600 text-sm mt-1 hidden" role="alert">
+        You must confirm your information.
+      </p>
+
+      <!-- Submit Button -->
+      <div class="mt-8">
+        <button type="submit"
+          class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Register
+        </button>
+      </div>
+      <div class="min-w-[270px]">
+        <div class="mt-4 text-center dark:text-gray-200">Already Registered Users?
+          <a class="text-blue-500 underline hover:text-blue-600" href="index.html">Login</a>
+        </div>
+      </div>
+    </form>
+
+  </div>
+  <script src="js/auth.js"></script>
+
+</body>
+
+</html>
