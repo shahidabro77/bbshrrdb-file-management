@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
 const { ReceivedFile, SentFile } = require('../models');
-const authMiddleware = require('../middleware/authMiddleware');
+const {authMiddleware} = require('../middleware/authMiddleware');
 
 router.get('/', authMiddleware, async (req, res) => {
   const query = req.query.q || '';

@@ -1,39 +1,3 @@
-// const express = require('express');
-// const app = express();
-// const path = require('path');
-// require('dotenv').config();
-
-// // ✅ Serve uploaded files (like profile photos)
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// // ✅ Serve static frontend assets (HTML, CSS, JS)
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// // ✅ Route to serve index.html on root path
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
-
-// // ✅ Route to serve dashboard.html
-// app.get('/dashboard', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
-// });
-
-// // ⚠️ Do NOT use express.json() or urlencoded() here; multer handles form data
-// // app.use(express.json());
-// // app.use(express.urlencoded({ extended: true }));
-
-// // ✅ API routes for user creation (uses multer)
-// const userRoutes = require('./routes/user');
-// app.use('/api/users', userRoutes);
-
-// // ✅ Start server
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`🚀 Server is running on http://localhost:${PORT}`);
-// });
-
-
 const express = require('express');
 const app = express();
 const sequelize = require('./config/database');
@@ -50,6 +14,16 @@ const path = require('path');
 require('dotenv').config();
 const cors = require('cors');
 
+const fs = require('fs');
+const dirs = ['uploads', 'uploads/sent_files', 'uploads/received_files'];
+
+dirs.forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
+
+app.use('/uploads', express.static('uploads'));
+
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
@@ -65,6 +39,12 @@ app.use('/uploads/sent_files', express.static(path.join(__dirname, 'uploads/sent
 
 app.use('/api/sections', require('./routes/sectionRoutes'));
 app.use('/api', fileLogsRoutes);
+
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/profile', require('./routes/profileRoutes'));
+
+app.use('/api/users', require('./routes/userAdminRoutes'));
+
 
 
 // app.use('/api/files', fileRoutes);

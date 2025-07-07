@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Section } = require('../models');
-const authMiddleware = require('../middleware/authMiddleware');
+const {authMiddleware} = require('../middleware/authMiddleware');
 
 // Create new section
 router.post('/', authMiddleware, async (req, res) => {

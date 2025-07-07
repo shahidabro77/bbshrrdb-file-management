@@ -1,0 +1,125 @@
+<!-- JavaScript: Charts and Table Search -->
+  <script>
+    // Update current date and time dynamically
+    function updateDateTime() {
+      const now = new Date();
+      const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+      const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+      const dateString = now.toLocaleDateString('en-US', optionsDate);
+      const timeString = now.toLocaleTimeString('en-US', optionsTime);
+      document.getElementById('current-date-time').textContent = `Date: ${dateString} | Time: ${timeString} PKT`;
+    }
+
+    // Call it once on load and then every minute
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // Update every minute
+
+    // User Dropdown Toggle
+    const userBtn = document.getElementById('user-dropdown-btn');
+    const userMenu = document.getElementById('user-dropdown-menu');
+    const sidebarToggleButton = document.querySelector('header .md\\:hidden'); // Select the sidebar toggle button
+    const sidebar = document.querySelector('aside'); // Select the sidebar element
+    const mainContentContainer = document.querySelector('.flex-1'); // The container holding sidebar and main (now without initial pt-16)
+
+    userBtn.addEventListener('click', () => {
+      userMenu.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+        userMenu.classList.add('hidden');
+      }
+    });
+
+    // Adjust sidebar and main content padding for fixed header
+    function adjustLayoutForFixedHeader() {
+      // Set fixed padding-top of 60px to reduce the gap
+      const fixedPadding = '60px'; // Reduced from 72px
+      sidebar.style.paddingTop = fixedPadding;
+      mainContentContainer.style.paddingTop = fixedPadding;
+
+      // For smaller screens, ensure the main content is not indented when sidebar is hidden
+      if (window.innerWidth < 768) {
+        document.querySelector('main').classList.remove('ml-64');
+        document.querySelector('main').classList.add('ml-0');
+      } else {
+        document.querySelector('main').classList.add('ml-64');
+        document.querySelector('main').classList.remove('ml-0');
+      }
+    }
+
+    // Sidebar toggle functionality for small screens
+    sidebarToggleButton.addEventListener('click', () => {
+      sidebar.classList.toggle('hidden'); // Toggle visibility of sidebar
+      // Adjust main content margin based on sidebar visibility on small screens
+      if (!sidebar.classList.contains('hidden')) {
+        document.querySelector('main').classList.add('ml-64'); // Indent main if sidebar is shown
+      } else {
+        document.querySelector('main').classList.remove('ml-64'); // No indent if sidebar is hidden
+        document.querySelector('main').classList.add('ml-0');
+      }
+    });
+
+    
+
+    // Chart.js - Doughnut
+    const pieCtx = document.getElementById('filePieChart').getContext('2d');
+    new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Received', 'Sent', 'Pending', 'Archived'],
+        datasets: [{
+          label: 'Files',
+          data: [530, 430, 200, 85],
+          backgroundColor: ['#22c55e', '#eab308', '#3b82f6', '#a855f7'],
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    // Chart.js - Bar
+    const barCtx = document.getElementById('fileBarChart').getContext('2d');
+    new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Admin', 'IT', 'Accounts', 'Training', 'Private', 'Public'],
+        datasets: [{
+          label: 'Files',
+          data: [100, 180, 90, 140, 160, 130],
+          backgroundColor: '#3b82f6'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Dynamic Table Search
+    const searchInput = document.getElementById('searchInput');
+    const fileTableBody = document.getElementById('fileTable'); // Get the tbody
+    const tableRows = fileTableBody.querySelectorAll('tr'); // Select rows within tbody
+
+    searchInput.addEventListener('input', () => {
+      const filter = searchInput.value.toLowerCase();
+      tableRows.forEach(row => {
+        const rowText = Array.from(row.cells)
+          .map(cell => cell.textContent.toLowerCase())
+          .join(' ');
+        row.style.display = rowText.includes(filter) ? '' : 'none';
+      });
+    });
+  </script>

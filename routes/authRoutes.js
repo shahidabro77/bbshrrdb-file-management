@@ -103,7 +103,7 @@ router.post('/login', async (req, res) => {
 
 
 // Protected Route Example
-const authMiddleware = require('../middleware/authMiddleware');
+const {authMiddleware} = require('../middleware/authMiddleware');
 router.get('/profile', authMiddleware, async (req, res) => {
     const user = await User.findByPk(req.user.id);
     res.json({ user });
