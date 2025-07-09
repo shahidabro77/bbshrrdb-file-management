@@ -82,32 +82,61 @@ router.post('/', authMiddleware, upload.array('attachments'), async (req, res) =
 
 const { Op } = require('sequelize');
 
+// router.get('/', authMiddleware, async (req, res) => {
+//   try {
+//     const userRole = req.user.role;
+
+//     const isSecretary = userRole === 'Secretary bbshrrdb';
+
+//     const whereClause = isSecretary
+//       ? {}
+//       : {
+//         [Op.or]: [
+//           { received_from: userRole },
+//           { sent_to: userRole }
+//         ]
+//       };
+
+//     const files = await ReceivedFile.findAll({
+//       where: whereClause,
+//       order: [['id', 'DESC']]
+//     });
+
+//     res.json({ success: true, data: files });
+//   } catch (err) {
+//     console.error('Get Received Files Error:', err.message);
+//     res.status(500).json({ success: false, error: 'Failed to fetch received files' });
+//   }
+// });
+
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const userRole = req.user.role;
+    let query = {};
+    const userRole = req.user.role?.toLowerCase();
 
-    const isSecretary = userRole === 'Secretary bbshrrdb';
-
-    const whereClause = isSecretary
-      ? {}
-      : {
-        [Op.or]: [
-          { received_from: userRole },
-          { sent_to: userRole }
-        ]
+    if (userRole !== 'secretary bbshrrdb') {
+      query = {
+        where: {
+          [Op.or]: [
+            { sent_to: userRole },
+            { received_from: userRole }
+          ]
+        }
       };
+    }
 
     const files = await ReceivedFile.findAll({
-      where: whereClause,
+      ...query,
       order: [['id', 'DESC']]
     });
 
     res.json({ success: true, data: files });
   } catch (err) {
-    console.error('Get Received Files Error:', err.message);
-    res.status(500).json({ success: false, error: 'Failed to fetch received files' });
+    console.error('Get Sent Files Error:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to fetch sent files' });
   }
 });
+
 
 
 module.exports = router;

@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = form.password.value;
       const confirmPassword = form.password_confirmation.value;
       const confirmation = form.confirmation.checked;
+      const role = form.role.value;
+
 
       // Reset errors
       document.querySelectorAll('[id$="-top-error"]').forEach(el => el.classList.add('hidden'));
@@ -81,6 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
         hasError = true;
       }
 
+      if (!role) {
+        alert("Please select a role");
+        return;
+      }
+
       if (hasError) return;
 
       try {
@@ -90,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({
             email: email,         // using email as username
             password,
-            role: 'user',           // default role
+            role,           // default role
             full_name,
             cnic,
             mobile

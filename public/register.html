@@ -79,18 +79,9 @@
           <!-- <input id="cnic" name="cnic" type="text" placeholder="4XXXX-XXXXXXX-X" required maxlength="15"
             pattern="^4\d{4}-\d{7}-\d{1}$" aria-describedby="cnic-error" autocomplete="off" value="41234-1234567-1"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" /> -->
-            <input
-              id="cnic"
-              name="cnic"
-              type="text"
-              placeholder="4XXXX-XXXXXXX-X"
-              required
-              maxlength="15"
-              pattern="^4\d{4}-\d{7}-\d{1}$"
-              aria-describedby="cnic-error"
-              autocomplete="off"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
+          <input id="cnic" name="cnic" type="text" placeholder="4XXXX-XXXXXXX-X" required maxlength="15"
+            pattern="^4\d{4}-\d{7}-\d{1}$" aria-describedby="cnic-error" autocomplete="off"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
           <p id="cnic-error" class="text-red-600 text-sm mt-1 hidden" role="alert">
             CNIC must be in format 4XXXX-XXXXXXX-X
           </p>
@@ -118,6 +109,23 @@
             Enter a valid mobile number starting with 03.
           </p>
         </div>
+      </div>
+
+      <div class="mt-6">
+        <label for="role" class="block text-sm font-medium text-gray-700">Select Role</label>
+        <select id="role" name="role" required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+          <option value="" disabled selected>Select a role</option>
+          <option value="Secretary bbshrrdb">Secretary bbshrrdb</option>
+          <option value="training director">Training Director</option>
+          <option value="procurment section">Procurement Section</option>
+          <option value="admin section">Admin Section</option>
+          <option value="accounts section">Accounts Section</option>
+          <option value="training section">Training Section</option>
+          <option value="public sector">Public Sector</option>
+          <option value="private sector">Private Sector</option>
+          <option value="IT section">IT Section</option>
+        </select>
       </div>
 
       <!-- Row 3: Password + Confirm Password -->

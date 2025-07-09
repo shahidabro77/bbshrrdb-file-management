@@ -80,18 +80,46 @@ router.post('/', authMiddleware, upload.array('attachments'), async (req, res) =
 
 const { Op } = require('sequelize');
 
+// router.get('/', authMiddleware, async (req, res) => {
+//   try {
+//     const userRole = req.user.role;
+
+//     const isSecretary = userRole === 'Secretary bbshrrdb';
+
+//     const whereClause = isSecretary
+//       ? {} // no filter for admin
+//       : { sent_to: userRole };
+
+//     const files = await SentFile.findAll({
+//       where: whereClause,
+//       order: [['id', 'DESC']]
+//     });
+
+//     res.json({ success: true, data: files });
+//   } catch (err) {
+//     console.error('Get Sent Files Error:', err.message);
+//     res.status(500).json({ success: false, error: 'Failed to fetch sent files' });
+//   }
+// });
+
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const userRole = req.user.role;
+    let query = {};
+    const userRole = req.user.role?.toLowerCase();
 
-    const isSecretary = userRole === 'Secretary bbshrrdb';
-
-    const whereClause = isSecretary
-      ? {} // no filter for admin
-      : { sent_to: userRole };
+    if (userRole !== 'secretary bbshrrdb') {
+      query = {
+        where: {
+          [Op.or]: [
+            { sent_to: userRole },
+            { received_from: userRole }
+          ]
+        }
+      };
+    }
 
     const files = await SentFile.findAll({
-      where: whereClause,
+      ...query,
       order: [['id', 'DESC']]
     });
 
@@ -101,6 +129,7 @@ router.get('/', authMiddleware, async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to fetch sent files' });
   }
 });
+
 
 
 module.exports = router;
