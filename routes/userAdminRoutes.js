@@ -6,7 +6,7 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 
 // Middleware to check admin
 const isAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ success: false, error: 'Forbidden' });
+  if (req.user.role !== 'admin' || req.user.role !== 'secretary bbshrrdb') return res.status(403).json({ success: false, error: 'Forbidden' });
   next();
 };
 

@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
     } = req.body;
 
     console.log(req.body);
-    
+
 
     if (!full_name || !cnic || !email || !mobile || !password || !role) {
       return res.status(400).json({ message: 'All fields are required' });
@@ -65,6 +65,11 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    // ✅ Block inactive users
+    if (!user.is_active) {
+      return res.status(403).json({ message: 'Your account is inactive. Please contact admin.' });
+    }
+
     // ✅ Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -74,7 +79,7 @@ router.post('/login', async (req, res) => {
     // ✅ Generate JWT token
     const token = jwt.sign(
       {
-        id: user.user_id,
+        user_id: user.user_id,
         email: user.email,
         role: user.role,
         full_name: user.full_name
@@ -103,10 +108,10 @@ router.post('/login', async (req, res) => {
 
 
 // Protected Route Example
-const {authMiddleware} = require('../middleware/authMiddleware');
+const { authMiddleware } = require('../middleware/authMiddleware');
 router.get('/profile', authMiddleware, async (req, res) => {
-    const user = await User.findByPk(req.user.id);
-    res.json({ user });
+  const user = await User.findByPk(req.user.id);
+  res.json({ user });
 });
 
 module.exports = router;

@@ -69,15 +69,45 @@ router.post('/', authMiddleware, upload.array('attachments'), async (req, res) =
   }
 });
 
-// ✅ Get all received files
+// // ✅ Get all received files
+// router.get('/', authMiddleware, async (req, res) => {
+//   try {
+//     const files = await ReceivedFile.findAll({ order: [['id', 'DESC']] });
+//     res.json({ success: true, data: files });
+//   } catch (err) {
+//     console.error('Get Received Files Error:', err.message);
+//     res.status(500).json({ success: false, error: 'Failed to fetch received files' });
+//   }
+// });
+
+const { Op } = require('sequelize');
+
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const files = await ReceivedFile.findAll({ order: [['id', 'DESC']] });
+    const userRole = req.user.role;
+
+    const isSecretary = userRole === 'Secretary bbshrrdb';
+
+    const whereClause = isSecretary
+      ? {}
+      : {
+        [Op.or]: [
+          { received_from: userRole },
+          { sent_to: userRole }
+        ]
+      };
+
+    const files = await ReceivedFile.findAll({
+      where: whereClause,
+      order: [['id', 'DESC']]
+    });
+
     res.json({ success: true, data: files });
   } catch (err) {
     console.error('Get Received Files Error:', err.message);
     res.status(500).json({ success: false, error: 'Failed to fetch received files' });
   }
 });
+
 
 module.exports = router;

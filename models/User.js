@@ -39,7 +39,12 @@ const User = sequelize.define('User', {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  photo: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
+
 
 }, {
   tableName: 'users',

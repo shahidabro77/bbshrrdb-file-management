@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,7 +27,8 @@
           </div>
 
           <!-- Error/Success Message Container -->
-          <div id="message-container" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4"></div>
+          <div id="message-container"
+            class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4"></div>
 
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 text-sm" id="userTable">
@@ -113,7 +115,7 @@
         if (!response.ok) {
           if (response.status === 401) {
             showMessage('Unauthorized. Please log in again.');
-            setTimeout(() => window.location.href = '/login.html', 2000);
+            setTimeout(() => window.location.href = '/', 2000);
             return;
           }
           throw new Error('Failed to fetch users');
@@ -131,26 +133,34 @@
       const tbody = document.getElementById('userTableBody');
       tbody.innerHTML = '';
 
+      const token = localStorage.getItem('token');
+      const payload = token ? JSON.parse(atob(token.split('.')[1])) : null;
+      const currentUserId = payload?.user_id;
+
       users.forEach(user => {
+        const isCurrentUser = user.user_id === currentUserId;
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="px-4 py-2">${user.user_id}</td>
-          <td class="px-4 py-2">${user.full_name}</td>
-          <td class="px-4 py-2">${user.email}</td>
-          <td class="px-4 py-2 font-medium ${user.is_active ? 'text-green-600' : 'text-red-600'}">
-            ${user.is_active ? 'Active' : 'Inactive'}
-          </td>
-          <td class="px-4 py-2">
-            <button 
-              onclick="toggleUserStatus(${user.user_id}, ${user.is_active})"
-              class="px-3 py-1 text-sm rounded ${
-                user.is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
-              } text-white"
-            >
-              ${user.is_active ? 'Deactivate' : 'Activate'}
-            </button>
-          </td>
-        `;
+      <td class="px-4 py-2">${user.user_id}</td>
+      <td class="px-4 py-2">${user.full_name}</td>
+      <td class="px-4 py-2">${user.email}</td>
+      <td class="px-4 py-2 font-medium ${user.is_active ? 'text-green-600' : 'text-red-600'}">
+        ${user.is_active ? 'Active' : 'Inactive'}
+      </td>
+      <td class="px-4 py-2">
+        ${isCurrentUser
+            ? '<span class="text-gray-400 italic">N/A</span>'
+            : `<button 
+                onclick="toggleUserStatus(${user.user_id}, ${user.is_active})"
+                class="px-3 py-1 text-sm rounded ${user.is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+            } text-white"
+              >
+                ${user.is_active ? 'Deactivate' : 'Activate'}
+              </button>`
+          }
+      </td>
+    `;
         tbody.appendChild(tr);
       });
     };
@@ -194,4 +204,5 @@
     document.addEventListener('DOMContentLoaded', loadUsers);
   </script>
 </body>
+
 </html>

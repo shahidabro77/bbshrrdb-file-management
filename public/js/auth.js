@@ -19,8 +19,13 @@ if (loginForm) {
       localStorage.setItem('token', data.token);
       window.location.href = 'dashboard.html';
     } else {
-      alert(data.message || 'Login failed');
+      if (res.status === 403) {
+        alert('Your account is inactive. Please contact the administrator.');
+      } else {
+        alert(data.message || 'Login failed');
+      }
     }
+
   });
 }
 
