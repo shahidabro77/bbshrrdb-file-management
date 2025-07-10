@@ -10,7 +10,8 @@ const { Role } = require('../models');
 // ✅ Admin Check Middleware
 const isAdmin = (req, res, next) => {
   console.log('req.user.role ', req.user.role)
-  if (req.user.role !== 'admin' || req.user.role !== 'secretary bbshrrdb') return res.status(403).json({ error: 'Forbidden. Admins only.' });
+  if (req.user.role !== 'admin' && req.user.role !== 'secretary bbshrrdb') 
+    return res.status(403).json({ error: 'Forbidden. Admins only.' });
   next();
 };
 
