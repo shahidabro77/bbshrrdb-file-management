@@ -124,23 +124,7 @@
 
   <script src="./js/header.js"></script>
 
-  <script>
-    // Load sidebar
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('sidebar-container').innerHTML = data;
-
-        // Highlight active link
-        const current = window.location.pathname.split('/').pop();
-        document.querySelectorAll('.nav-link').forEach(link => {
-          const href = link.getAttribute('href');
-          if (href === current) {
-            link.classList.add('bg-blue-600', 'font-bold');
-          }
-        });
-      });
-  </script>
+  <script src="./js/sidebar.js"></script>
 
 
   <!-- Scripts -->
@@ -159,19 +143,7 @@
       }
     });
 
-    // Load sidebar
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('sidebar-container').innerHTML = data;
-        const current = window.location.pathname.split('/').pop();
-        document.querySelectorAll('.nav-link').forEach(link => {
-          const href = link.getAttribute('href');
-          if (href === current) {
-            link.classList.add('bg-blue-600', 'font-bold');
-          }
-        });
-      });
+    // ...sidebar is now loaded via sidebar.js...
 
     // Sidebar toggle for mobile
     document.getElementById('sidebar-toggle').addEventListener('click', () => {
