@@ -61,36 +61,8 @@
   </div>
 
   <script src="./js/header.js"></script>
-  <script>
-    // Load sidebar and highlight active link
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('sidebar-container').innerHTML = data;
-        const current = window.location.pathname.split('/').pop();
-        document.querySelectorAll('.nav-link').forEach(link => {
-          if (link.getAttribute('href') === current) {
-            link.classList.add('bg-blue-600', 'font-bold');
-          }
-        });
-      });
 
-    // Update Date & Time (if using a time element)
-    function updateDateTime() {
-      const now = new Date();
-      const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
-      const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
-      const dateString = now.toLocaleDateString('en-US', optionsDate);
-      const timeString = now.toLocaleTimeString('en-US', optionsTime);
-      const dateTimeElement = document.getElementById('current-date-time');
-      if (dateTimeElement) {
-        dateTimeElement.textContent = `Date: ${dateString} | Time: ${timeString} PKT`;
-      }
-    }
-
-    updateDateTime();
-    setInterval(updateDateTime, 60000);
-  </script>
+  <script src="./js/sidebar.js"></script>
 
   <script src="/js/profile.js"></script>
 

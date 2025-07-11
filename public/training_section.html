@@ -78,6 +78,8 @@
 
   <script src="./js/header.js"></script>
 
+  <script src="./js/sidebar.js"></script>
+
   <script>
     //user toggle
     // User Dropdown Toggle
@@ -94,24 +96,6 @@
         userMenu.classList.add('hidden');
       }
     });</script>
-
-  <script>
-    // Load sidebar
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('sidebar-container').innerHTML = data;
-
-        // Highlight active link
-        const current = window.location.pathname.split('/').pop();
-        document.querySelectorAll('.nav-link').forEach(link => {
-          const href = link.getAttribute('href');
-          if (href === current) {
-            link.classList.add('bg-blue-600', 'font-bold');
-          }
-        });
-      });
-  </script>
 
   <!-- Font Awesome for icons -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>

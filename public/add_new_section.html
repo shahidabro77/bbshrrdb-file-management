@@ -31,6 +31,8 @@
 
   <script src="./js/header.js"></script>
 
+  <script src="./js/sidebar.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('sectionForm');
@@ -62,63 +64,6 @@
         userMenu.classList.add('hidden');
       }
     });
-  </script>
-
-  <script>
-    // Load sidebar
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('sidebar-container').innerHTML = data;
-
-        // Highlight active link
-        const current = window.location.pathname.split('/').pop();
-        document.querySelectorAll('.nav-link').forEach(link => {
-          const href = link.getAttribute('href');
-          if (href === current) {
-            link.classList.add('bg-blue-600', 'font-bold');
-          }
-        });
-      });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('sectionForm');
-      const successMsg = document.getElementById('successMsg');
-
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const name = document.getElementById('sectionName').value.trim();
-        if (!name) return;
-
-        try {
-          const token = localStorage.getItem('token'); // assuming JWT stored
-          const res = await fetch('/api/sections', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ name })
-          });
-
-          const data = await res.json();
-          if (data.success) {
-            successMsg.classList.remove('hidden');
-            successMsg.textContent = '✅ Section added successfully!';
-            form.reset();
-          } else {
-            successMsg.classList.remove('hidden');
-            successMsg.classList.add('text-red-600');
-            successMsg.textContent = data.message || '❌ Failed to add section.';
-          }
-        } catch (err) {
-          successMsg.classList.remove('hidden');
-          successMsg.classList.add('text-red-600');
-          successMsg.textContent = '❌ Server error. Try again later.';
-        }
-      });
-    });
-
   </script>
 </body>
 
