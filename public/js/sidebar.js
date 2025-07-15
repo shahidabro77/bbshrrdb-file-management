@@ -48,18 +48,34 @@ async function loadSidebar() {
     <i class="${link.icon} w-4"></i> ${link.label}
   </a>`).join("");
 
-    if (role === 'admin') {
+    // Role-based sidebar logic
+    if (role === 'admin' || role === 'secratary (admin)') {
         html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">Administration</h3>`;
         html += adminLinks.map(link => `<a href="${link.href}" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600">
       <i class="${link.icon} w-4"></i> ${link.label}
     </a>`).join("");
-    }
-
-    if (role === 'admin' || role === 'section_officer') {
         html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">Sections</h3>`;
         html += sectionLinks.map(link => `<a href="${link.href}" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600">
       <i class="${link.icon} w-4"></i> ${link.label}
     </a>`).join("");
+    } else if (role === 'accounts section') {
+        html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">Accounts Section</h3>`;
+        html += `<a href="accounts_section.html" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600"><i class="fas fa-file-invoice-dollar w-4"></i> Accounts Section</a>`;
+    } else if (role === 'training section') {
+        html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">Training Section</h3>`;
+        html += `<a href="training_section.html" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600"><i class="fas fa-chalkboard-teacher w-4"></i> Training Section</a>`;
+    } else if (role === 'training director') {
+        html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">Training Director</h3>`;
+        html += `<a href="training_section.html" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600"><i class="fas fa-chalkboard-teacher w-4"></i> Training Director</a>`;
+    } else if (role === 'private sector') {
+        html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">Private Sector</h3>`;
+        html += `<a href="private_sector.html" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600"><i class="fas fa-building w-4"></i> Private Sector</a>`;
+    } else if (role === 'public sector') {
+        html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">Public Sector</h3>`;
+        html += `<a href="public_sector.html" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600"><i class="fas fa-city w-4"></i> Public Sector</a>`;
+    } else if (role === 'it section') {
+        html += `<h3 class="text-xs font-semibold uppercase text-blue-200 mt-4 mb-1">IT Section</h3>`;
+        html += `<a href="it_section.html" class="nav-link flex items-center gap-2 px-4 py-2 rounded hover:bg-blue-600"><i class="fas fa-desktop w-4"></i> IT Section</a>`;
     }
 
     html += `</aside>`;

@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const { User } = require('../models');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { Role } = require('../models');
+const allowedRoles = require('../middleware/roleMiddleware');
 
 
 // ✅ Admin Check Middleware
@@ -163,7 +164,8 @@ router.post('/', upload.none(), async (req, res) => {
 
 
 // ✅ Get All Users
-router.get('/', authMiddleware, isAdmin, async (req, res) => {
+// Only admin and secretary (admin) can view all users
+router.get('/', authMiddleware, allowedRoles('admin', 'secratary (admin)'), async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: ['user_id', 'full_name', 'email', 'role', 'is_active']
@@ -177,7 +179,8 @@ router.get('/', authMiddleware, isAdmin, async (req, res) => {
 });
 
 // ✅ Toggle User Status (Activate/Deactivate)
-router.put('/:id/status', authMiddleware, isAdmin, async (req, res) => {
+// Only admin and secretary (admin) can toggle user status
+router.put('/:id/status', authMiddleware, allowedRoles('admin', 'secratary (admin)'), async (req, res) => {
   const userId = req.params.id;
   const { is_active } = req.body;
 
@@ -195,7 +198,7 @@ router.put('/:id/status', authMiddleware, isAdmin, async (req, res) => {
   }
 });
 
-// ✅ User Settings (Get Current User Info)
+// Any logged-in user can view their own settings
 router.get('/settings', authMiddleware, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.user_id, {
@@ -208,7 +211,7 @@ router.get('/settings', authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Update User Profile
+// Any logged-in user can update their own profile
 router.put('/settings', authMiddleware, upload.single('photo'), async (req, res) => {
   try {
     const user = await User.findByPk(req.user.user_id);
