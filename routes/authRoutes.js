@@ -54,29 +54,29 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // ✅ Validate required fields
+    // Validate required fields
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    // ✅ Find user by email
+    // Find user by email
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // ✅ Block inactive users
+    // Block inactive users
     if (!user.is_active) {
       return res.status(403).json({ message: 'Your account is inactive. Please contact admin.' });
     }
 
-    // ✅ Compare passwords
+    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // ✅ Generate JWT token
+    // Generate JWT token with user info
     const token = jwt.sign(
       {
         user_id: user.user_id,
@@ -88,16 +88,22 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1d' }
     );
 
-    // ✅ Send success response
+    // Clean user object for frontend (omit password, etc.)
+    const safeUser = {
+      id: user.user_id,
+      full_name: user.full_name,
+      email: user.email,
+      mobile: user.mobile,
+      role: user.role,
+      cnic: user.cnic,
+      is_active: user.is_active
+    };
+
+    // Success response
     res.status(200).json({
       message: 'Login successful',
       token,
-      user: {
-        id: user.user_id,
-        full_name: user.full_name,
-        email: user.email,
-        role: user.role
-      }
+      user: safeUser
     });
 
   } catch (err) {
@@ -106,9 +112,30 @@ router.post('/login', async (req, res) => {
   }
 });
 
+const { authMiddleware } = require('../middleware/authMiddleware');
+
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    // Find user by user_id
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['user_id', 'full_name', 'email', 'mobile', 'role', 'is_active', 'photo']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ user });
+  } catch (err) {
+    console.error('GET /me error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+
 
 // Protected Route Example
-const { authMiddleware } = require('../middleware/authMiddleware');
+// const { authMiddleware } = require('../middleware/authMiddleware');
 router.get('/profile', authMiddleware, async (req, res) => {
   const user = await User.findByPk(req.user.id);
   res.json({ user });

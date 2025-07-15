@@ -8,7 +8,9 @@ const sequelize = require('./config/database');
 
 // Middleware
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -29,7 +31,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/received-files', require('./routes/receivedFileRoutes'));
 app.use('/api/sent-files', require('./routes/sentFileRoutes'));
-app.use('/api/search', require('./routes/searchRoutes'));
+app.use('/api/search-files', require('./routes/searchRoutes'));
 app.use('/api/sections', require('./routes/sectionRoutes'));
 app.use('/api', require('./routes/fileLogs'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));

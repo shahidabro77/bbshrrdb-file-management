@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { Op } = require('sequelize');
 const { ReceivedFile } = require('../models');
 const { authMiddleware } = require('../middleware/authMiddleware');
 
@@ -18,34 +19,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
   fileFilter: (req, file, cb) => {
     const allowedTypes = /pdf|doc|docx|jpg|jpeg|png/;
     const ext = path.extname(file.originalname).toLowerCase();
-    if (allowedTypes.test(ext)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only documents and images are allowed'));
-    }
+    if (allowedTypes.test(ext)) cb(null, true);
+    else cb(new Error('Only documents and images are allowed'));
   }
 });
 
-// ✅ Create received file
+// ✅ Create a received file
 router.post('/', authMiddleware, upload.array('attachments'), async (req, res) => {
   try {
     const {
-      file_number, file_subject, file_description,
-      received_on, received_from, sent_to,
-      sent_on, remarks
-    } = req.body;
-
-    if (!file_number || !file_subject || !received_on || !received_from) {
-      return res.status(400).json({ success: false, error: 'Required fields missing' });
-    }
-
-    const files = req.files ? req.files.map(file => file.filename) : [];
-
-    const newFile = await ReceivedFile.create({
       file_number,
       file_subject,
       file_description,
@@ -53,8 +39,25 @@ router.post('/', authMiddleware, upload.array('attachments'), async (req, res) =
       received_from,
       sent_to,
       sent_on,
+      remarks
+    } = req.body;
+
+    if (!file_number || !file_subject || !received_on || !received_from) {
+      return res.status(400).json({ success: false, error: 'Required fields missing' });
+    }
+
+    const files = req.files?.map(file => file.filename) || [];
+
+    const newFile = await ReceivedFile.create({
+      file_number,
+      file_subject,
+      file_description,
+      received_on,
+      received_from: received_from || req.user.full_name || req.user.role,
+      sent_to,
+      sent_on,
       remarks,
-      attachments: files,
+      attachments: JSON.stringify(files), // Store as JSON string
       created_by: req.user.id
     });
 
@@ -69,74 +72,30 @@ router.post('/', authMiddleware, upload.array('attachments'), async (req, res) =
   }
 });
 
-// // ✅ Get all received files
-// router.get('/', authMiddleware, async (req, res) => {
-//   try {
-//     const files = await ReceivedFile.findAll({ order: [['id', 'DESC']] });
-//     res.json({ success: true, data: files });
-//   } catch (err) {
-//     console.error('Get Received Files Error:', err.message);
-//     res.status(500).json({ success: false, error: 'Failed to fetch received files' });
-//   }
-// });
-
-const { Op } = require('sequelize');
-
-// router.get('/', authMiddleware, async (req, res) => {
-//   try {
-//     const userRole = req.user.role;
-
-//     const isSecretary = userRole === 'Secretary bbshrrdb';
-
-//     const whereClause = isSecretary
-//       ? {}
-//       : {
-//         [Op.or]: [
-//           { received_from: userRole },
-//           { sent_to: userRole }
-//         ]
-//       };
-
-//     const files = await ReceivedFile.findAll({
-//       where: whereClause,
-//       order: [['id', 'DESC']]
-//     });
-
-//     res.json({ success: true, data: files });
-//   } catch (err) {
-//     console.error('Get Received Files Error:', err.message);
-//     res.status(500).json({ success: false, error: 'Failed to fetch received files' });
-//   }
-// });
-
+// ✅ Get received files based on user role
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    let query = {};
     const userRole = req.user.role?.toLowerCase();
 
-    if (userRole !== 'secretary bbshrrdb') {
-      query = {
-        where: {
-          [Op.or]: [
-            { sent_to: userRole },
-            { received_from: userRole }
-          ]
-        }
+    const whereClause = (userRole === 'secretary bbshrrdb')
+      ? {} // Admins get everything
+      : {
+        [Op.or]: [
+          { sent_to: userRole },
+          { received_from: userRole }
+        ]
       };
-    }
 
     const files = await ReceivedFile.findAll({
-      ...query,
+      where: whereClause,
       order: [['id', 'DESC']]
     });
 
     res.json({ success: true, data: files });
   } catch (err) {
-    console.error('Get Sent Files Error:', err.message);
-    res.status(500).json({ success: false, error: 'Failed to fetch sent files' });
+    console.error('Get Received Files Error:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to fetch received files' });
   }
 });
-
-
 
 module.exports = router;

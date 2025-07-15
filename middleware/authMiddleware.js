@@ -1,38 +1,5 @@
-// const jwt = require('jsonwebtoken');
-
-// function authMiddleware(req, res, next) {
-//   const authHeader = req.headers.authorization;
-
-//   if (!authHeader) {
-//     return res.status(401).json({ message: 'No token provided' });
-//   }
-
-//   const token = authHeader.split(' ')[1];
-//   try {
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     req.user = decoded;
-//     next();
-//   } catch (err) {
-//     return res.status(403).json({ message: 'Invalid token' });
-//   }
-// }
-
-// function authorizeRoles(...allowedRoles) {
-//   return (req, res, next) => {
-//     if (!req.user || !allowedRoles.includes(req.user.role)) {
-//       return res.status(403).json({ message: 'Access Denied' });
-//     }
-//     next();
-//   };
-// }
-
-// module.exports = {
-//   authMiddleware,
-//   authorizeRoles
-// };
-
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const User = require('../models/User');
 
 exports.authMiddleware = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -40,20 +7,25 @@ exports.authMiddleware = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findByPk(decoded.user_id);
-    if (!user) return res.status(401).json({ error: 'User not found' });
 
+    // Find the user by user_id from decoded JWT
+    const user = await User.findByPk(decoded.user_id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Attach full user info to req.user if needed
     req.user = {
-      id: user.user_id,
-      role: user.role,
-      email: user.email
+      id: user.user_id,           // ✅ this is correct based on your model
+      full_name: user.full_name,  // ✅ available to use in response
+      email: user.email,
+      role: user.role
     };
 
     next();
   } catch (err) {
+    console.error('Token validation failed:', err);
     res.status(401).json({ error: 'Invalid token' });
   }
 };
-
-
-// module.exports = { authMiddleware };

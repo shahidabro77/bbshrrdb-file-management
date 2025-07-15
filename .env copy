@@ -1,0 +1,12 @@
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=root
+DB_NAME=bbshrrdb_fms
+
+# Server Configuration
+PORT=3000
+
+# Optional
+JWT_SECRET=57f6eafa45a2d5b849de32ea9fe7745277cec74e3d0ffadedae477014bf7003a
