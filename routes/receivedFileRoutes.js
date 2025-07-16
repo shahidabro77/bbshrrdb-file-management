@@ -48,14 +48,18 @@ router.post('/', authMiddleware, upload.array('attachments'), async (req, res) =
 
     const files = req.files?.map(file => file.filename) || [];
 
+    // Use values from frontend if provided, else fill from backend
+    const finalSentTo = sent_to || req.user.role || req.user.full_name || 'unknown';
+    const finalSentOn = sent_on || new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
     const newFile = await ReceivedFile.create({
       file_number,
       file_subject,
       file_description,
       received_on,
       received_from: received_from || req.user.full_name || req.user.role,
-      sent_to,
-      sent_on,
+      sent_to: finalSentTo,
+      sent_on: finalSentOn,
       remarks,
       attachments: JSON.stringify(files), // Store as JSON string
       created_by: req.user.id

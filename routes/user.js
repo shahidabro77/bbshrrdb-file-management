@@ -165,7 +165,7 @@ router.post('/', upload.none(), async (req, res) => {
 
 // ✅ Get All Users
 // Only admin and secretary (admin) can view all users
-router.get('/', authMiddleware, allowedRoles('admin', 'secratary (admin)'), async (req, res) => {
+router.get('/', authMiddleware, allowedRoles('admin', 'secretary bbshrrdb'), async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: ['user_id', 'full_name', 'email', 'role', 'is_active']
@@ -180,7 +180,7 @@ router.get('/', authMiddleware, allowedRoles('admin', 'secratary (admin)'), asyn
 
 // ✅ Toggle User Status (Activate/Deactivate)
 // Only admin and secretary (admin) can toggle user status
-router.put('/:id/status', authMiddleware, allowedRoles('admin', 'secratary (admin)'), async (req, res) => {
+router.put('/:id/status', authMiddleware, allowedRoles('admin', 'secretary bbshrrdb'), async (req, res) => {
   const userId = req.params.id;
   const { is_active } = req.body;
 
