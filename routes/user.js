@@ -201,7 +201,7 @@ router.put('/:id/status', authMiddleware, allowedRoles('admin', 'secretary bbshr
 // Any logged-in user can view their own settings
 router.get('/settings', authMiddleware, async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.user_id, {
+    const user = await User.findByPk(req.user.id, {
       attributes: ['user_id', 'full_name', 'email', 'mobile', 'role', 'is_active', 'photo']
     });
     if (!user) return res.status(404).json({ error: 'User not found' });
@@ -214,7 +214,7 @@ router.get('/settings', authMiddleware, async (req, res) => {
 // Any logged-in user can update their own profile
 router.put('/settings', authMiddleware, upload.single('photo'), async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.user_id);
+    const user = await User.findByPk(req.user.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     const { full_name, email, password } = req.body;
